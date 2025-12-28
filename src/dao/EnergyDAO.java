@@ -1,36 +1,27 @@
 package dao;
 
-import model.EnergyRecord;
-import service.EnergyService;
-
+import util.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.List;
 
-public class EnergyDAO implements EnergyService {
+public class EnergyDAO {
 
-    @Override
-    public void addRecord(EnergyRecord record) {
-        try {
-            Connection con = DBConnection.getConnection();
+    public void saveEnergy(double produced, double consumed, double storedEnergy) {
 
-            String query = "INSERT INTO energy VALUES (?, ?, ?)";
-            PreparedStatement ps = con.prepareStatement(query);
+        String sql =
+                "INSERT INTO energy_data (produced, consumed, stored_energy) VALUES (?, ?, ?)";
 
-            ps.setDouble(1, record.getProduction());
-            ps.setDouble(2, record.getConsumption());
-            ps.setDouble(3, record.getStorage());
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setDouble(1, produced);
+            ps.setDouble(2, consumed);
+            ps.setDouble(3, storedEnergy);
 
             ps.executeUpdate();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    // Collection Example
-    public List<EnergyRecord> getAllRecords() {
-        List<EnergyRecord> list = new ArrayList<>();
-        return list;
     }
 }
